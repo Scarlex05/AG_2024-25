@@ -55,15 +55,14 @@ segunda:
     	bne $t5, $t6, else_if  # (utilizamos bne: distinto) Si C + 1 != 7, no se cumple, vamos al else if
    	j if                    # Si C + 1 == 7, condición cumplida, vamos al bloque IF
 
-# -------- Bloque IF: se cumple alguna de las dos condiciones --------
 if:
    	# Ejecutamos: Z = Z - 3
    	lw $t4, Z
     	addi $t4, $t4, -3
     	sw $t4, Z
-   	j end_if     # IMPORTANTE: saltamos al final del if-else para NO ejecutar los otros bloques
+   	j end_if     #saltamos al final del if-else para NO ejecutar los otros bloques
 
-# -------- Else if: (A < B) && (C > 5) --------
+# Else if: (A < B) && (C > 5)
 else_if:
    	bge $t0, $t1, else    # (utilizamos bge: mayor o igual) Si A >= B, no se cumple (A < B es falso), salta al else
     	li $t7, 5
@@ -74,7 +73,7 @@ else_if:
     	sw $t4, Z
     	j end_if                   # Saltamos al final para no ejecutar el else
 
-# -------- Else: ninguna condición se cumplió --------
+# Else: ninguna condición se cumplió
 else:
    	# Z = (A - B) * (C + D) - (A / C)
 
@@ -89,7 +88,7 @@ else:
     	sub $t4, $t7, $t8    # $t4 = (A - B)*(C + D) - (A / C)
     	sw $t4, Z
 
-# -------- Final del IF-ELSE (todas las ramas terminan aquí) --------
+# Final del IF-ELSE
 end_if:
     	li $v0, 17      # código para salir del programa
     	li $a0, 0       # return 0
