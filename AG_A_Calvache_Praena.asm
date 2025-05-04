@@ -22,6 +22,7 @@
 # - Punto(s) 1/3/4
 #
 # Instrucciones del juego:
+# (IMPORTANTE: conectar el teclado antes de iniciar el Bitmap Display)
 # El jugador controla la barra que hace que la bola rebote, ganara la partida cuando se hayan roto todos los bloques
 # Perdera en el caso de que la bola se pierda 3 veces 
 # La barra se controla con las teclas a (mover a la izquierda) y d (mover a la derecha)
