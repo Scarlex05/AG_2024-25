@@ -57,13 +57,13 @@ tam_pelota:      .word 1         # Tamaño de la pelota
 .text
 main:
 	# Mostrar menu de inicio
-	#li	$v0,50
-	#la	$a0, frase_inicio
-	#syscall				# Ensena la frase junto a unas opciones
+	li	$v0,50
+	la	$a0, frase_inicio
+	syscall				# Ensena la frase junto a unas opciones
 
-	#beq	$a0, $zero, init_game	# Si le da a si, se inicia el juego
-	#li	$v0, 10			# Si no, no se ejecuta
-	#syscall
+	beq	$a0, $zero, init_game	# Si le da a si, se inicia el juego
+	li	$v0, 10			# Si no, no se ejecuta
+	syscall
 
 init_game:
 	# Dibujar fondo
@@ -81,7 +81,7 @@ update:
 	jal j1
 	jal j2
 	jal pelota
-	
+	jal col_j
 	b update
 
 draw_background:
@@ -109,7 +109,7 @@ draw_top:
     la   $t1, color_bordes        # Direccion del color de bordes
     lw   $t2, 0($t1)              # $t2
 
-    li   $t3, 32                # 16 bloques por fila (256px / 8px = 32 bloques)
+    li   $t3, 64                # 16 bloques por fila (256px / 8px = 32 bloques)
 
     # Dibujar linea superior (en la fila 0)
 draw_loop_top:
@@ -123,13 +123,13 @@ draw_loop_top:
     # La pantalla tiene 32 filas (256 pixeles alto / 8)
     # Asi que ultima fila empieza en: base + (31 * 16 * 4) bytes
     lw   $t0, displayAddress      # Volver a cargar base
-    li   $t4, 63                  # fila 31
+    li   $t4, 62                  # fila 30
     li   $t5, 32                  # 16 bloques por fila
     mul  $t4, $t4, $t5            # t4 = 31 * 16
     sll  $t4, $t4, 2              # multiplicar por 4 (tamano de palabra)
     add  $t0, $t0, $t4            # direccion de inicio de ultima fila
 
-    li   $t3, 32                  # Numero total de bloques por fila (16 bloques)
+    li   $t3, 64                  # Numero total de bloques por fila (16 bloques)
 
 draw_loop_bottom:
     sw   $t2, 0($t0)              # Pintar el bloque con el color de bordes (blanco)
@@ -335,6 +335,13 @@ movimiento_pelota:
 	sw  $t2, 0($t4)
 	sw  $t3, 0($t5)
 	
+	li $v0, 33
+        li $a0, 40
+        li $a1, 2000
+        li $a2, 7
+        li $a3, 100
+        syscall
+	
 	li $t0, 16
 	li $t1, 32
 	end_p_reb_abj:
@@ -355,6 +362,13 @@ movimiento_pelota:
 	sw  $t2, 0($t4)
 	sw  $t3, 0($t5)
 	
+	li $v0, 33
+        li $a0, 40
+        li $a1, 2000
+        li $a2, 7
+        li $a3, 100
+        syscall
+	
 	li $t0, 16
 	li $t1, 32
 	end_p_reb_arr:
@@ -374,14 +388,25 @@ col_j:
 	if_col:
 	lw $t0, pos_pelota_y
 	
-	beq $t0, 58, then_col
-	beq $t0, 59, then_col
+	beq $t0, 58, then_col_j1
+	beq $t0, 59, then_col_j1
+	beq $t0, 4, then_col_j2
+	beq $t0, 5, then_col_j2
 	b end_col
-	then_col:
+	then_col_j1:
 	
 	lw $t0, pos_pelota_x
 	lw $t1, pos_j1
 	sub $t2, $t0, $t1
+	
+	b then_col_end
+	
+	then_col_j2:
+	lw $t0, pos_pelota_x
+	lw $t1, pos_j2
+	sub $t2, $t0, $t1
+	
+	then_col_end:
 	
 	beqz $t2, coll_dist0
 	blt $t2, -3, end_col
