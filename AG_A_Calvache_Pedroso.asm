@@ -14,10 +14,10 @@
 # - Base Address for Display: 0x10008000 ($gp)
 #
 # Máximo objetivo alcanzado en el proyecto:
-# - Juego base + 3 ampliaciones
+# - Juego base + 4 ampliaciones
 #
 # Ampliaciones implementadas:
-# - 6 (Modo multijugador completo)
+# - 1, 4, 5 y 6
 #
 # Instrucciones del juego:
 # - Jugador 1 (amarillo): "a" izquierda "d" dereha
@@ -33,11 +33,11 @@ victoria1:       .asciiz "Jugador 1 gana con 3 goles!"
 victoria2:       .asciiz "Jugador 2 gana con 3 goles!"
 
 # Colores
-color_fondo:     .word 0x3d9f08 #para el campo (verde)
-color_bordes:    .word 0xFFFFFF #para los bordes de gol
+color_fondo:     .word 0x3d9f08   #para el campo (verde)
+color_bordes:    .word 0xFFFFFF   #para los bordes de gol
 color_j1:        .word 0xFFC000   #para la barra de j1
 color_j2:        .word 0xFF00FF   #para la barra de j2
-color_pelota:    .word 0x000000  #para la pelota
+color_pelota:    .word 0x000000   #para la pelota
 
 # Configuración del juego
 ancho_pantalla:  .word 256
@@ -45,14 +45,14 @@ alto_pantalla:   .word 512
 displayAddress:  .word 0x10008000
 
 # Posiciones y estados
-pos_j1:          .word 16           # Posición Y pala jugador 1
-pos_j2:          .word 16           # Posición Y pala jugador 2
-pos_pelota_x:    .word 16        # Posición X pelota
-pos_pelota_y:    .word 32       # Posición Y pelota
-velocidad_x:     .word 1
-velocidad_y:     .word 1		#el juego empieza con la pelota para j1
-tam_pala:        .word 5        # Tamaño de las palas
-tam_pelota:      .word 1         # Tamaño de la pelota
+pos_j1:          .word 16           # Posición jugador 1
+pos_j2:          .word 16           # Posición jugador 2
+pos_pelota_x:    .word 16           # Posición X pelota
+pos_pelota_y:    .word 32           # Posición Y pelota
+velocidad_x:     .word 1		# Velocidad pelota eje x
+velocidad_y:     .word 1		# Velocidad pelota eje x
+tam_pala:        .word 5            # Tamaño de las palas
+tam_pelota:      .word 1            # Tamaño de la pelota
 
 .text
 main:
@@ -90,7 +90,7 @@ draw_background:
     la   $t1, color_fondo         # Cargar dirección de color_fondo
     lw   $t2, 0($t1)              # $t2 = valor del color verde
 
-    li   $t3, 2048           # Numero total de bloques a pintar
+    li   $t3, 2048                # Numero total de bloques a pintar
 
 draw_loop:
     
@@ -197,13 +197,13 @@ draw_loop_j2:
     
 pelota: 
     lw   $t0, displayAddress
-    lw   $t4, pos_pelota_y   		     # distancia de 5px para j1
+    lw   $t4, pos_pelota_y 		# distancia de 5px para j1
     subi $t4, $t4, 1
     mul  $t4, $t4, 32            
     lw   $t5, pos_pelota_x
     subi  $t5, $t5, 1
     add  $t4, $t4, $t5
-    mul  $t4, $t4, 4              # x4 para pasarlo a bytes 
+    mul  $t4, $t4, 4               # x4 para pasarlo a bytes 
     add  $t0, $t0, $t4
     
     lw $t1, color_fondo
@@ -308,7 +308,7 @@ movimiento_pelota:
 	add $t1, $t1, $t3
 	
 	
-	
+	#bucle rebote bordes
 	if_p_reb_bordes:
 	blez $t0, then_p_reb_bordes
 	bge $t0, 31, then_p_reb_bordes
@@ -322,7 +322,7 @@ movimiento_pelota:
 	end_p_reb_bordes:
 	
 	
-	
+	#rebote abajo
 	if_p_reb_abj:
 	bge $t1, 63, then_p_reb_abj
 	b end_p_reb_abj
@@ -349,7 +349,7 @@ movimiento_pelota:
 	
 	
 	
-	
+	#rebote arriba
 	if_p_reb_arr:
 	blez $t1, then_p_reb_arr
 	b end_p_reb_arr
@@ -382,7 +382,7 @@ movimiento_pelota:
    
    	jr $ra
 
-
+#colisiones
 col_j:
 	
 	if_col:
