@@ -335,6 +335,7 @@ movimiento_pelota:
 	sw  $t2, 0($t4)
 	sw  $t3, 0($t5)
 	
+	#sonido cuando mete gol
 	li $v0, 33
         li $a0, 40
         li $a1, 2000
@@ -362,6 +363,7 @@ movimiento_pelota:
 	sw  $t2, 0($t4)
 	sw  $t3, 0($t5)
 	
+	#sonido cuando mete gol
 	li $v0, 33
         li $a0, 40
         li $a1, 2000
